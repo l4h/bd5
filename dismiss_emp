@@ -1,0 +1,21 @@
+Use employees;
+delimiter //
+drop procedure toDismiss_emp;
+Create procedure toDismiss_emp(in par_emp_no int, in par_emp_salary int)
+comment 'update tables(dept_emp, titles, salaries) \n to dismiss emp'
+begin
+declare exit handler for sqlexception
+	begin
+		rollback;
+        select 'какая-то дичь';
+	end;
+	start transaction;
+		UPDATE titles set to_date = curdate() where emp_no= par_emp_no and to_date = '9999-01-01';
+		UPDATE dept_emp set to_date = curdate() where emp_no = par_emp_no and to_date='9999-01-01';
+		UPDATE salaries  SET salary=par_emp_salary, to_date = curdate() where emp_no=par_emp_no and to_date='9999-01-01';
+    commit;
+end//
+
+delimiter ;
+
+call toDismiss_emp(10006);
